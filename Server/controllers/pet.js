@@ -1,0 +1,282 @@
+const Pet = require("../models/pet");
+const { uploadImage } = require("../services/firebase");
+
+
+// Upload image to Firebase Storage via Server
+const uploadPetImageController = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: "No image file provided",
+            });
+        }
+
+        const imageUrl = await uploadImage(req.file);
+
+        return res.status(200).json({
+            success: true,
+            imageUrl,
+        });
+    } catch (error) {
+        console.error("Server upload image error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to upload image to Firebase",
+            error: error.message,
+        });
+    }
+};
+
+// Create a new pet
+const createPet = async (req, res) => {
+    try {
+        const {
+            petName,
+            ownerName,
+            petType,
+            breed,
+            country,
+            city,
+            about,
+            imageUrl,
+            currentBid,
+        } = req.body;
+
+        // Check if image URL is provided
+        if (!imageUrl) {
+            return res.status(400).json({
+                success: false,
+                message: "Pet image URL is required",
+            });
+        }
+
+        // Create pet in MongoDB
+        const pet = await Pet.create({
+            petName,
+            ownerName,
+            petType,
+            breed,
+            country,
+            city,
+            about,
+            imageUrl,
+            currentBid: currentBid || 0,
+        });
+
+        res.status(201).json({
+            success: true,
+            message: "Pet created successfully",
+            data: pet,
+        });
+    } catch (error) {
+        console.error("Create pet error:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "Failed to create pet",
+            error: error.message,
+        });
+    }
+};
+// Get a single pet by ID
+const getPet = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const pet = await Pet.findById(id);
+
+        if (!pet) {
+            return res.status(404).json({
+                success: false,
+                message: "Pet not found",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: pet,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch pet",
+            error: error.message,
+        });
+    }
+};
+
+
+// Get all pets
+const getAllPets = async (req, res) => {
+    try {
+        const pets = await Pet.find().sort({ currentBid: -1, createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            count: pets.length,
+            data: pets,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch pets",
+            error: error.message,
+        });
+    }
+};
+
+
+// Get pets by country
+const getPetsByCountry = async (req, res) => {
+    try {
+        const { country } = req.params;
+
+        const pets = await Pet.find({
+            country: {
+                $regex: `^${country}$`,
+                $options: "i",
+            },
+        }).sort({ rank: 1 });
+
+        res.status(200).json({
+            success: true,
+            count: pets.length,
+            data: pets,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch pets by country",
+            error: error.message,
+        });
+    }
+};
+
+
+// Get pets by city
+const getPetsByCity = async (req, res) => {
+    try {
+        const { city } = req.params;
+
+        const pets = await Pet.find({
+            city: {
+                $regex: `^${city}$`,
+                $options: "i",
+            },
+        }).sort({ rank: 1 });
+
+        res.status(200).json({
+            success: true,
+            count: pets.length,
+            data: pets,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch pets by city",
+            error: error.message,
+        });
+    }
+};
+
+
+// Search pets by pet name
+const searchPetsByName = async (req, res) => {
+    try {
+        const { petName } = req.params;
+
+        const pets = await Pet.find({
+            petName: {
+                $regex: petName,
+                $options: "i",
+            },
+        }).sort({ rank: 1 });
+
+        res.status(200).json({
+            success: true,
+            count: pets.length,
+            data: pets,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to search pets",
+            error: error.message,
+        });
+    }
+};
+
+
+// Filter pets by type
+const getPetsByType = async (req, res) => {
+    try {
+        const { petType } = req.params;
+
+        const pets = await Pet.find({
+            petType: {
+                $regex: `^${petType}$`,
+                $options: "i",
+            },
+        }).sort({ rank: 1 });
+
+        res.status(200).json({
+            success: true,
+            count: pets.length,
+            data: pets,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to filter pets by type",
+            error: error.message,
+        });
+    }
+};
+
+
+// Increment pet views
+const incrementPetViews = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const pet = await Pet.findByIdAndUpdate(
+            id,
+            { $inc: { views: 1 } },
+            { new: true }
+        );
+
+        if (!pet) {
+            return res.status(404).json({
+                success: false,
+                message: "Pet not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            views: pet.views,
+            data: pet,
+        });
+    } catch (error) {
+        console.error("Increment pet views error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to increment pet views",
+            error: error.message,
+        });
+    }
+};
+
+module.exports = {
+    uploadPetImageController,
+    createPet,
+    getPet,
+    getAllPets,
+    getPetsByCountry,
+    getPetsByCity,
+    searchPetsByName,
+    getPetsByType,
+    incrementPetViews,
+};
