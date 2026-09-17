@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function ConfirmRankDialog({
@@ -10,6 +10,7 @@ export function ConfirmRankDialog({
   category,
   rank,
   price,
+  isSubmitting = false,
 }: {
   open: boolean;
   onClose: () => void;
@@ -18,6 +19,7 @@ export function ConfirmRankDialog({
   category: string;
   rank: number;
   price: number;
+  isSubmitting?: boolean;
 }) {
   const [agreed, setAgreed] = useState(false);
 
@@ -97,7 +99,7 @@ export function ConfirmRankDialog({
               >
                 Terms of Service
               </Link>{" "}
-              of Spotlight.lol
+              of Pawdium.lol
             </span>
           </label>
 
@@ -115,18 +117,26 @@ export function ConfirmRankDialog({
         <div className="mt-5 flex justify-end gap-3 border-t border-border px-6 py-4">
           <button
             type="button"
+            disabled={isSubmitting}
             onClick={onClose}
-            className="cursor-pointer rounded-full border border-border px-5 py-2 text-sm font-bold transition-colors hover:bg-muted"
+            className="cursor-pointer rounded-full border border-border px-5 py-2 text-sm font-bold transition-colors hover:bg-muted disabled:opacity-45 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
           <button
             type="button"
-            disabled={!agreed}
+            disabled={!agreed || isSubmitting}
             onClick={onConfirm}
-            className="rounded-full bg-primary px-5 py-2 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-45 cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-45 disabled:cursor-not-allowed cursor-pointer"
           >
-            Continue to checkout
+            {isSubmitting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Submitting...
+              </>
+            ) : (
+              "Continue to checkout"
+            )}
           </button>
         </div>
       </div>

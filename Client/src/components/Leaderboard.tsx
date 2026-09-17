@@ -14,7 +14,7 @@ function applyFilter(pets: Pet[], filter: FilterKey, selectedCountryCode = "IN")
     case "birds":
       return pets.filter((p) => p.type === "Bird" || p.type === "Birds");
     case "new":
-      return pets.filter((p) => p.isNew);
+      return pets;
     case "hall":
       return pets.filter((p) => p.hallOfFame);
     case "country":
@@ -47,7 +47,8 @@ export function Leaderboard({
     setPage(1);
   }, [filter, selectedCountryCode]);
 
-  const visible = applyFilter(pets, filter, selectedCountryCode).sort((a, b) => b.bid - a.bid);
+  const filtered = applyFilter(pets, filter, selectedCountryCode);
+  const visible = filter === "new" ? filtered : [...filtered].sort((a, b) => b.bid - a.bid);
   const totalPages = Math.ceil(visible.length / ITEMS_PER_PAGE) || 1;
   const currentPage = Math.min(page, totalPages);
   

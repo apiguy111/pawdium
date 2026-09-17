@@ -7,7 +7,7 @@ import { Footer } from "@/components/Footer";
 export const Route = createFileRoute("/payment/success")({
   head: () => ({
     meta: [
-      { title: "Payment Successful — Spotlight.lol" },
+      { title: "Payment Successful — Pawdium.lol" },
       {
         name: "description",
         content: "Your payment was processed successfully. Welcome to the leaderboard!",

@@ -14,13 +14,13 @@ import type { DailyBoardData, DailyEntry, Pet } from "@/types";
 export const Route = createFileRoute("/daily")({
   head: () => ({
     meta: [
-      { title: "Daily Boards — Spotlight.lol" },
+      { title: "Daily Boards — Pawdium.lol" },
       {
         name: "description",
         content:
           "Every UTC day gets its own pet leaderboard. Today stays live until midnight UTC, then the board closes for good.",
       },
-      { property: "og:title", content: "Daily Boards — Spotlight.lol" },
+      { property: "og:title", content: "Daily Boards — Pawdium.lol" },
       {
         name: "description",
         content:

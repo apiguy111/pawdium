@@ -128,3 +128,46 @@ export async function incrementPetViewsApi(petId: string): Promise<number | null
     return null;
   }
 }
+
+export interface PetStatsData {
+  totalPets: number;
+  totalBids: number;
+  highestBid: number;
+}
+
+export async function fetchPetStatsApi(): Promise<PetStatsData | null> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/pets/stats`);
+    if (!res.ok) throw new Error("Failed to fetch pet stats");
+    const json = await res.json();
+    return json.data || null;
+  } catch (err) {
+    console.error("API fetchPetStatsApi error:", err);
+    return null;
+  }
+}
+
+export async function fetchNewPetsApi(): Promise<PetApiData[]> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/pets/new`);
+    if (!res.ok) throw new Error("Failed to fetch new pets");
+    const json = await res.json();
+    return json.data || [];
+  } catch (err) {
+    console.error("API fetchNewPetsApi error:", err);
+    return [];
+  }
+}
+
+export async function searchPetsApi(query: string): Promise<PetApiData[]> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/pets/search?q=${encodeURIComponent(query)}`);
+    if (!res.ok) throw new Error("Failed to search pets");
+    const json = await res.json();
+    return json.data || [];
+  } catch (err) {
+    console.error("API searchPetsApi error:", err);
+    return [];
+  }
+}
+

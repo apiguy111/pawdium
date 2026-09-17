@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Moon, PawPrint, Search, Sun, X } from "lucide-react";
+import { Loader2, Moon, PawPrint, Search, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { mockPets } from "@/data/pets";
+import { searchPetsApi, type PetApiData } from "@/lib/api";
 
 const NAV = [
   { label: "Leaderboard", to: "/" },
@@ -36,12 +36,26 @@ export function Header() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [results, setResults] = useState<PetApiData[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
-  const results = query.trim()
-    ? mockPets.filter((p) =>
-      p.name.toLowerCase().includes(query.trim().toLowerCase()),
-    )
-    : [];
+  useEffect(() => {
+    const trimmed = query.trim();
+    if (!trimmed) {
+      setResults([]);
+      setIsSearching(false);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setIsSearching(true);
+      const data = await searchPetsApi(trimmed);
+      setResults(data);
+      setIsSearching(false);
+    }, 250);
+
+    return () => clearTimeout(timer);
+  }, [query]);
 
   return (
     <header className="relative">
@@ -103,37 +117,55 @@ export function Header() {
               />
             </div>
             {query.trim() && (
-              <ul className="mt-2 max-h-64 overflow-auto">
-                {results.length === 0 && (
-                  <li className="px-3 py-2 text-sm text-muted-foreground">
+              <div className="mt-2 max-h-64 overflow-auto">
+                {isSearching ? (
+                  <div className="flex items-center justify-center gap-2 py-4 text-xs font-semibold text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                    Searching pets...
+                  </div>
+                ) : results.length === 0 ? (
+                  <p className="px-3 py-2 text-sm text-muted-foreground">
                     No pets found.
-                  </li>
+                  </p>
+                ) : (
+                  <ul className="flex flex-col gap-1">
+                    {results.map((pet) => {
+                      const petId = pet._id || pet.id || pet.petName;
+                      return (
+                        <li
+                          key={petId}
+                          onClick={() => {
+                            setSearchOpen(false);
+                            setQuery("");
+                          }}
+                          className="flex items-center gap-3 rounded-xl px-3 py-2 transition-colors hover:bg-muted cursor-pointer"
+                        >
+                          <img
+                            src={pet.imageUrl}
+                            alt={pet.petName}
+                            loading="lazy"
+                            className="h-9 w-9 rounded-full object-cover ring-1 ring-border"
+                          />
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-semibold">
+                              {pet.petName}{" "}
+                              <span className="text-xs font-normal text-muted-foreground">
+                                · by {pet.ownerName}
+                              </span>
+                            </p>
+                            <p className="truncate text-xs text-muted-foreground">
+                              {pet.breed || pet.petType} · {pet.city}, {pet.country}
+                            </p>
+                          </div>
+                          <span className="ml-auto text-sm font-bold text-primary shrink-0">
+                            ${(pet.currentBid || 0).toLocaleString("en-US")}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
                 )}
-                {results.map((pet) => (
-                  <li
-                    key={pet.id}
-                    className="flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-muted"
-                  >
-                    <img
-                      src={pet.image}
-                      alt={pet.name}
-                      loading="lazy"
-                      className="h-9 w-9 rounded-full object-cover"
-                    />
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold">
-                        {pet.name} · {pet.tagline}
-                      </p>
-                      <p className="truncate text-xs text-muted-foreground">
-                        {pet.breed} · {pet.city}, {pet.country}
-                      </p>
-                    </div>
-                    <span className="ml-auto text-sm font-bold text-primary">
-                      ${pet.bid.toLocaleString("en-US")}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              </div>
             )}
           </div>
         </div>

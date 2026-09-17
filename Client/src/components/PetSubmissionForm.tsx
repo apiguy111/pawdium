@@ -678,7 +678,7 @@ export function PetSubmissionForm({
             {isSubmitting ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                Processing...
+                Submitting...
               </>
             ) : (
               <>
@@ -710,6 +710,7 @@ export function PetSubmissionForm({
             category={`${selectedType} · Spotlight leaderboard`}
             rank={predictedRank}
             price={claimPrice}
+            isSubmitting={isSubmitting}
           />
         );
       })()}

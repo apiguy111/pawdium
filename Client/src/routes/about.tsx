@@ -1,21 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { DollarSign, PawPrint, Star, Users } from "lucide-react";
-import founder from "@/assets/founder.jpeg";
+import { useEffect, useState } from "react";
+import founder from "@/assets/founder.png";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { StatCard } from "@/components/StatCard";
 import { StatusPill } from "@/components/StatusPill";
+import { fetchPetStatsApi, type PetStatsData } from "@/lib/api";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Us — Spotlight.lol" },
+      { title: "About Us — Pawdium.lol" },
       {
         name: "description",
         content:
-          "Spotlight.lol is a community-run pet leaderboard: no ads, no paywalls, just pets, their people and one very simple rule.",
+          "Pawdium.lol is a community-run pet leaderboard: no ads, no paywalls, just pets, their people and one very simple rule.",
       },
-      { property: "og:title", content: "About Us — Spotlight.lol" },
+      { property: "og:title", content: "About Us — Pawdium.lol" },
       {
         property: "og:description",
         content:
@@ -27,6 +29,20 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
+  const [stats, setStats] = useState<PetStatsData | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchPetStatsApi().then((data) => {
+      if (isMounted && data) {
+        setStats(data);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -39,9 +55,8 @@ function AboutPage() {
             <span className="text-primary">Made for pets.</span> Run by their people.
           </h2>
           <p className="mt-3 max-w-[720px] text-[15px] leading-relaxed text-muted-foreground">
-            Spotlight.lol started as a small weekend experiment built around one
-            stubborn idea: let the community pick who stands at the top. No ads, no
-            paywalls, no clever tricks. Just you, your pet, and a shot at the number one
+            Pawdium.lol started as a small weekend experiment built around one
+            stubborn idea: let the community pick who stands at the top. No ads, no clever tricks. Just you, your pet, and a shot at the number one
             spot.
           </p>
 
@@ -70,22 +85,22 @@ function AboutPage() {
 
           <div className="mt-3 grid gap-3 md:grid-cols-3">
             <StatCard
-              icon={Users}
-              value="144,063"
-              label="Visitors"
-              hint="And growing every day"
+              icon={PawPrint}
+              value={stats ? stats.totalPets.toLocaleString("en-US") : "..."}
+              label="Pets on Pawdium"
+              hint="Every one has a story to tell"
               tone="primary"
             />
             <StatCard
               icon={DollarSign}
-              value="$241,368"
+              value={stats ? `$${stats.totalBids.toLocaleString("en-US")}` : "..."}
               label="Total Bids"
               hint="In spotlight auctions"
               tone="accent"
             />
             <StatCard
               icon={Star}
-              value="$17,000"
+              value={stats ? `$${stats.highestBid.toLocaleString("en-US")}` : "..."}
               label="Highest Bid So Far"
               hint="For a moment in the spotlight"
               tone="gold"
@@ -107,7 +122,7 @@ function AboutPage() {
           <div className="mt-5 flex flex-wrap items-start gap-5 pb-3">
             <img
               src={founder}
-              alt="Portrait of the Spotlight.lol founder"
+              alt="Portrait of the Pawdium.lol founder"
               loading="lazy"
               width={512}
               height={512}

@@ -70,13 +70,13 @@ function RulesPage() {
       <LegalSection heading="How ranking works">
         <LegalList
           items={[
-            "A new pet can enter the leaderboard with a minimum bid of $5.",
+            "A new pet can enter the leaderboard with a minimum bid of $1.",
             "Bids are made in whole US dollars.",
-            "To take #1, your bid must be at least $5 higher than the current #1 bid.",
+            "To take #1, your bid must be at least $1 higher than the current #1 bid.",
             "You do not have to challenge #1. A lower bid places your pet at the highest position that amount qualifies for.",
             "If two pets have the same bid, the pet that reached that amount first keeps the higher position.",
             "If your pet is already on the leaderboard, you can submit another bid to raise its position.",
-            "When raising an existing bid, you pay only the difference between your current bid and your new bid.",
+            // "When raising an existing bid, you pay only the difference between your current bid and your new bid.",
             "Another pet cannot take your position simply by matching your bid. They must exceed it according to the current minimum increment.",
             "Your pet's rank can change whenever another pet places a qualifying higher bid.",
             "Daily competitions may use their own time periods and ranking rules.",

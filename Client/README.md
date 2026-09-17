@@ -1,6 +1,6 @@
 # Spotlight Pet Rankings
 
-Build the frontend for a modern pet leaderboard website called "Spotlight.lol".
+Build the frontend for a modern pet leaderboard website called "Pawdium.lol".
 
 I am attaching 3 reference images:
 
@@ -80,7 +80,7 @@ BRAND
 
 Website name:
 
-Spotlight.lol
+Pawdium.lol
 
 Theme:
 
@@ -140,11 +140,11 @@ Desktop header should match the reference design.
 
 Left side:
 
-- Spotlight.lol logo
+- Pawdium.lol logo
 
 - simple paw icon
 
-- "Spotlight.lol"
+- "Pawdium.lol"
 
 Navigation on the right:
 
@@ -460,7 +460,7 @@ Heading:
 
 "About Us"
 
-Create a short introduction explaining the concept of Spotlight.lol.
+Create a short introduction explaining the concept of Pawdium.lol.
 
 Use the same visual hierarchy as the reference:
 
@@ -484,7 +484,7 @@ Use original wording with the same meaning.
 
 For example, communicate the idea that:
 
-- Spotlight.lol started as a simple experiment
+- Pawdium.lol started as a simple experiment
 
 - the community determines who gets attention
 

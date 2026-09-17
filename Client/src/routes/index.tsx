@@ -9,19 +9,19 @@ import { PetDetailModal } from "@/components/PetDetailModal";
 import { PetSubmissionForm, COUNTRIES } from "@/components/PetSubmissionForm";
 import { StatusPill } from "@/components/StatusPill";
 import { mockPets } from "@/data/pets";
-import { fetchAllPets, incrementPetViewsApi } from "@/lib/api";
+import { fetchAllPets, fetchNewPetsApi, incrementPetViewsApi } from "@/lib/api";
 import type { FilterKey, Pet } from "@/types";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Spotlight.lol — The Pet Leaderboard" },
+      { title: "Pawdium.lol — The Pet Leaderboard" },
       {
         name: "description",
         content:
           "Claim #1 and put your pet in the spotlight. A live, community-ranked leaderboard for dogs, cats, birds and every other very good animal.",
       },
-      { property: "og:title", content: "Spotlight.lol — The Pet Leaderboard" },
+      { property: "og:title", content: "Pawdium.lol — The Pet Leaderboard" },
       {
         property: "og:description",
         content:
@@ -32,8 +32,34 @@ export const Route = createFileRoute("/")({
   component: LeaderboardPage,
 });
 
+function formatApiPet(p: any): Pet {
+  const matchingCountry = COUNTRIES.find(
+    (c) => c.name.toLowerCase() === p.country?.toLowerCase()
+  );
+  return {
+    id: p._id || p.id || `${p.petName}-${Date.now()}`,
+    name: p.petName,
+    tagline: "",
+    description: p.about || "Spotlight contestant",
+    owner: p.ownerName,
+    breed: p.breed || "Standard",
+    type: (p.petType as any) || "Dog",
+    city: p.city || "Hyderabad",
+    country: p.country,
+    countryCode: matchingCountry?.code || "IN",
+    image: p.imageUrl,
+    bid: p.currentBid || 0,
+    activity: "Active just now",
+    engagement: `${p.views || 0} views`,
+    views: p.views || 0,
+    rank: p.rank,
+    isNew: true,
+  };
+}
+
 function LeaderboardPage() {
   const [pets, setPets] = useState<Pet[]>([]);
+  const [newPets, setNewPets] = useState<Pet[]>([]);
   const [filter, setFilter] = useState<FilterKey>("all");
   const [selectedCountryFilter, setSelectedCountryFilter] = useState({
     name: "India",
@@ -54,29 +80,7 @@ function LeaderboardPage() {
     async function loadBackendPets() {
       const apiPets = await fetchAllPets();
       if (apiPets && apiPets.length > 0) {
-        const formatted: Pet[] = apiPets.map((p) => {
-          const matchingCountry = COUNTRIES.find(
-            (c) => c.name.toLowerCase() === p.country?.toLowerCase()
-          );
-          return {
-            id: p._id || p.id || `${p.petName}-${Date.now()}`,
-            name: p.petName,
-            tagline: "",
-            description: p.about || "Spotlight contestant",
-            owner: p.ownerName,
-            breed: p.breed || "Standard",
-            type: (p.petType as any) || "Dog",
-            city: p.city || "Hyderabad",
-            country: p.country,
-            countryCode: matchingCountry?.code || "IN",
-            image: p.imageUrl,
-            bid: p.currentBid || 0,
-            activity: "Active just now",
-            engagement: `${p.views || 0} views`,
-            views: p.views || 0,
-            rank: p.rank,
-          };
-        });
+        const formatted: Pet[] = apiPets.map(formatApiPet);
         setPets(formatted);
 
         // Calculate Rank 1 (highest bid) + 1
@@ -88,6 +92,17 @@ function LeaderboardPage() {
     }
     loadBackendPets();
   }, []);
+
+  // Fetch last 20 new pets when "new" filter is selected
+  useEffect(() => {
+    if (filter === "new") {
+      fetchNewPetsApi().then((apiPets) => {
+        if (apiPets && apiPets.length > 0) {
+          setNewPets(apiPets.map(formatApiPet));
+        }
+      });
+    }
+  }, [filter]);
 
   const handleStepPrice = (delta: number) => {
     setClaimPrice((prev) => {
@@ -205,7 +220,7 @@ function LeaderboardPage() {
 
         <div className="mt-4">
           <Leaderboard
-            pets={pets}
+            pets={filter === "new" ? newPets : pets}
             filter={filter}
             selectedCountryCode={selectedCountryFilter.code}
             onBid={handleBid}

@@ -9,7 +9,7 @@ const FILTERS: { key: FilterKey; label: string; icon: React.ElementType }[] = [
   { key: "cats", label: "Cats", icon: Cat },
   { key: "birds", label: "Birds", icon: Bird },
   { key: "new", label: "New Entries", icon: CalendarDays },
-  { key: "hall", label: "Hall of Fame", icon: Trophy },
+  // { key: "hall", label: "Hall of Fame", icon: Trophy },
 ];
 
 export interface CountryFilterItem {

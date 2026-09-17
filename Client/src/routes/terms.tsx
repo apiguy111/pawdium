@@ -62,8 +62,8 @@ function TermsPage() {
 
         <LegalList
           items={[
-            <>Email: [your contact email]</>,
-            <>Legal/business address: [your address, if required]</>,
+            <>Email: pawdium.lol@gmail.com</>,
+            <>Address: 6969/9, 8th phase, KPHB Colony, Kondapur, Hyderabad-500084, Telangana, India</>,
           ]}
         />
 
@@ -679,7 +679,7 @@ function TermsPage() {
       <LegalSection heading="Governing law">
         <p>
           These Terms will be governed by the laws of{" "}
-          <strong>[insert country/state/jurisdiction]</strong>, without regard
+          <strong>India</strong>, without regard
           to its conflict-of-law rules.
         </p>
 
@@ -716,7 +716,7 @@ function TermsPage() {
         <LegalList
           items={[
             <>Pawdium.lol</>,
-            <>Email: [your contact email]</>,
+            <>Email: pawdium.lol@gmail.com</>,
             <>Website: https://pawdium.lol</>,
           ]}
         />

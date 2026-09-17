@@ -158,7 +158,7 @@ export const mockPets: Pet[] = [
     id: `extra-pet-${i + 1}`,
     name: `Star Pet ${i + 1}`,
     tagline: `Leaderboard Star #${i + 8}`,
-    description: `A lovely pet competing for the top spotlight on Spotlight.lol leaderboard.`,
+    description: `A lovely pet competing for the top spotlight on Pawdium.lol leaderboard.`,
     owner: `User ${i + 1}`,
     breed: i % 3 === 0 ? "Golden Retriever" : i % 3 === 1 ? "Tabby Cat" : "Parakeet",
     type: (i % 3 === 0 ? "Dog" : i % 3 === 1 ? "Cat" : "Bird") as "Dog" | "Cat" | "Bird",

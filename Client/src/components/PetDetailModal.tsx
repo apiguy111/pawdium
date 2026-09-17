@@ -72,8 +72,8 @@ export function PetDetailModal({
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: `${pet.name} on Spotlight.lol`,
-        text: `Check out ${pet.name} on Spotlight.lol leaderboard!`,
+        title: `${pet.name} on Pawdium.lol`,
+        text: `Check out ${pet.name} on Pawdium.lol leaderboard!`,
         url: window.location.href,
       }).catch(() => {});
     } else {

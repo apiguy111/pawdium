@@ -51,22 +51,19 @@ function PrivacyPage() {
       <LegalSection heading="Who is responsible">
         <p>
           The controller for personal data processed through the Service is
-          <strong> [your legal name / company name]</strong> ("we", "us",
+          <strong> Pawdium.lol</strong> ("we", "us",
           "our").
         </p>
 
         <LegalList
           items={[
             <>Website: https://pawdium.lol</>,
-            <>Email: [your contact email]</>,
-            <>Legal/business address: [your address, if required]</>,
+            <>Email: pawdium.lol@gmail.com</>,
+            <>Address: H.No 698/9, 8th phase, KPHB Colony, Kondapur, Hyderabad-500084, Telangana, India</>,
           ]}
         />
 
-        <p>
-          Replace the placeholder information above with your actual legal
-          entity and contact details before publishing this policy.
-        </p>
+    
       </LegalSection>
 
       <LegalSection heading="What we collect">
@@ -407,7 +404,7 @@ function PrivacyPage() {
 
         <p>
           To make a privacy request, contact us at{" "}
-          <span className="text-accent">[your contact email]</span>.
+          <span className="text-accent">pawdium.lol@gmail.com</span>.
         </p>
 
         <p>
@@ -502,7 +499,7 @@ function PrivacyPage() {
         <LegalList
           items={[
             <>Pawdium.lol</>,
-            <>Email: [your contact email]</>,
+            <>Email: pawdium.lol@gmail.com</>,
             <>Website: https://pawdium.lol</>,
           ]}
         />

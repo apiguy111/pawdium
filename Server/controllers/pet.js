@@ -1,4 +1,5 @@
 const Pet = require("../models/pet");
+const Bid = require("../models/bid");
 const { uploadImage } = require("../services/firebase");
 
 
@@ -269,6 +270,104 @@ const incrementPetViews = async (req, res) => {
     }
 };
 
+// Get platform statistics
+const getPetStats = async (req, res) => {
+    try {
+        const totalPets = await Pet.countDocuments();
+
+        // Calculate total bids amount from successful bids and current bids
+        const bidAgg = await Bid.aggregate([
+            { $match: { status: "succeeded" } },
+            { $group: { _id: null, total: { $sum: "$amount" } } },
+        ]);
+        const bidsTotal = bidAgg[0]?.total || 0;
+
+        const petAgg = await Pet.aggregate([
+            { $group: { _id: null, total: { $sum: "$currentBid" } } },
+        ]);
+        const petCurrentBidTotal = petAgg[0]?.total || 0;
+
+        const totalBids = Math.max(bidsTotal, petCurrentBidTotal);
+
+        // Highest bid on the platform
+        const topPet = await Pet.findOne().sort({ currentBid: -1 });
+        const highestBid = topPet ? (topPet.currentBid || 0) : 0;
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                totalPets,
+                totalBids,
+                highestBid,
+            },
+        });
+    } catch (error) {
+        console.error("Get pet stats error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch platform stats",
+            error: error.message,
+        });
+    }
+};
+
+// Get last 20 new pet entries ordered by creation time
+const getNewPets = async (req, res) => {
+    try {
+        const pets = await Pet.find().sort({ createdAt: -1 }).limit(20);
+
+        return res.status(200).json({
+            success: true,
+            count: pets.length,
+            data: pets,
+        });
+    } catch (error) {
+        console.error("Get new pets error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch new pets",
+            error: error.message,
+        });
+    }
+};
+
+// Search pets by petName, ownerName, or breed
+const searchPets = async (req, res) => {
+    try {
+        const query = (req.query.q || req.params.petName || "").trim();
+
+        if (!query) {
+            const pets = await Pet.find().sort({ currentBid: -1, createdAt: -1 });
+            return res.status(200).json({
+                success: true,
+                count: pets.length,
+                data: pets,
+            });
+        }
+
+        const pets = await Pet.find({
+            $or: [
+                { petName: { $regex: query, $options: "i" } },
+                { ownerName: { $regex: query, $options: "i" } },
+                { breed: { $regex: query, $options: "i" } },
+            ],
+        }).sort({ currentBid: -1, createdAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            count: pets.length,
+            data: pets,
+        });
+    } catch (error) {
+        console.error("Search pets error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to search pets",
+            error: error.message,
+        });
+    }
+};
+
 module.exports = {
     uploadPetImageController,
     createPet,
@@ -277,6 +376,9 @@ module.exports = {
     getPetsByCountry,
     getPetsByCity,
     searchPetsByName,
+    searchPets,
     getPetsByType,
     incrementPetViews,
+    getPetStats,
+    getNewPets,
 };
