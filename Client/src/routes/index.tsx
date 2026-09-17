@@ -54,6 +54,7 @@ function formatApiPet(p: any): Pet {
     views: p.views || 0,
     rank: p.rank,
     isNew: true,
+    createdAt: p.createdAt,
   };
 }
 
@@ -164,7 +165,7 @@ function LeaderboardPage() {
     <div className="min-h-screen">
       <Header />
       <main className="mx-auto max-w-[1200px] px-6">
-        <StatusPill />
+        {/* <StatusPill /> */}
 
         <h1 className="mt-4 flex flex-wrap items-center justify-center gap-2 text-center text-3xl font-extrabold leading-tight">
           <span>Claim #1 and Spotlight Your Pet for</span>

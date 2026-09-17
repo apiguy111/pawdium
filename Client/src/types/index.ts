@@ -60,9 +60,11 @@ export interface Pet {
   activity: string;
   engagement: string;
   views?: number;
+  rank?: number;
   isNew?: boolean;
   hallOfFame?: boolean;
   verified?: boolean;
+  createdAt?: string;
 }
 
 export interface Bid {
