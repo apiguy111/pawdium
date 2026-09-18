@@ -109,10 +109,10 @@ const getPet = async (req, res) => {
 };
 
 
-// Get all pets
+// Get all pets (only those with a successful payment, i.e. currentBid > 0)
 const getAllPets = async (req, res) => {
     try {
-        const pets = await Pet.find().sort({ currentBid: -1, createdAt: -1 });
+        const pets = await Pet.find({ currentBid: { $gt: 0 } }).sort({ currentBid: -1, createdAt: -1 });
 
         res.status(200).json({
             success: true,
@@ -129,12 +129,13 @@ const getAllPets = async (req, res) => {
 };
 
 
-// Get pets by country
+// Get pets by country (only paid pets)
 const getPetsByCountry = async (req, res) => {
     try {
         const { country } = req.params;
 
         const pets = await Pet.find({
+            currentBid: { $gt: 0 },
             country: {
                 $regex: `^${country}$`,
                 $options: "i",
@@ -156,12 +157,13 @@ const getPetsByCountry = async (req, res) => {
 };
 
 
-// Get pets by city
+// Get pets by city (only paid pets)
 const getPetsByCity = async (req, res) => {
     try {
         const { city } = req.params;
 
         const pets = await Pet.find({
+            currentBid: { $gt: 0 },
             city: {
                 $regex: `^${city}$`,
                 $options: "i",
@@ -183,12 +185,13 @@ const getPetsByCity = async (req, res) => {
 };
 
 
-// Search pets by pet name
+// Search pets by pet name (only paid pets)
 const searchPetsByName = async (req, res) => {
     try {
         const { petName } = req.params;
 
         const pets = await Pet.find({
+            currentBid: { $gt: 0 },
             petName: {
                 $regex: petName,
                 $options: "i",
@@ -210,12 +213,13 @@ const searchPetsByName = async (req, res) => {
 };
 
 
-// Filter pets by type
+// Filter pets by type (only paid pets)
 const getPetsByType = async (req, res) => {
     try {
         const { petType } = req.params;
 
         const pets = await Pet.find({
+            currentBid: { $gt: 0 },
             petType: {
                 $regex: `^${petType}$`,
                 $options: "i",
@@ -270,10 +274,10 @@ const incrementPetViews = async (req, res) => {
     }
 };
 
-// Get platform statistics
+// Get platform statistics (only paid pets count)
 const getPetStats = async (req, res) => {
     try {
-        const totalPets = await Pet.countDocuments();
+        const totalPets = await Pet.countDocuments({ currentBid: { $gt: 0 } });
 
         // Calculate total bids amount from successful bids and current bids
         const bidAgg = await Bid.aggregate([
@@ -311,10 +315,10 @@ const getPetStats = async (req, res) => {
     }
 };
 
-// Get last 20 new pet entries ordered by creation time
+// Get last 20 new pet entries ordered by creation time (only paid pets)
 const getNewPets = async (req, res) => {
     try {
-        const pets = await Pet.find().sort({ createdAt: -1 }).limit(20);
+        const pets = await Pet.find({ currentBid: { $gt: 0 } }).sort({ createdAt: -1 }).limit(20);
 
         return res.status(200).json({
             success: true,
@@ -331,13 +335,13 @@ const getNewPets = async (req, res) => {
     }
 };
 
-// Search pets by petName, ownerName, or breed
+// Search pets by petName, ownerName, or breed (only paid pets)
 const searchPets = async (req, res) => {
     try {
         const query = (req.query.q || req.params.petName || "").trim();
 
         if (!query) {
-            const pets = await Pet.find().sort({ currentBid: -1, createdAt: -1 });
+            const pets = await Pet.find({ currentBid: { $gt: 0 } }).sort({ currentBid: -1, createdAt: -1 });
             return res.status(200).json({
                 success: true,
                 count: pets.length,
@@ -346,6 +350,7 @@ const searchPets = async (req, res) => {
         }
 
         const pets = await Pet.find({
+            currentBid: { $gt: 0 },
             $or: [
                 { petName: { $regex: query, $options: "i" } },
                 { ownerName: { $regex: query, $options: "i" } },

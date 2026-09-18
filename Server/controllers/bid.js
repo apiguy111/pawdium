@@ -228,6 +228,7 @@ const getBidsByDate = async (req, res) => {
         const endDate = new Date(`${date}T23:59:59.999Z`);
 
         const bids = await Bid.find({
+            status: "succeeded",
             createdAt: {
                 $gte: startDate,
                 $lte: endDate,

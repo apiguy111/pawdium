@@ -119,7 +119,8 @@ function DailyPage() {
             const petBidMap = new Map<string, { bid: number; pet: any }>();
 
             bids.forEach((b: any) => {
-              if (b.petId) {
+              // Only count bids with a succeeded payment
+              if (b.petId && b.status === "succeeded") {
                 const pId = b.petId._id || b.petId.id;
                 const existing = petBidMap.get(pId);
                 const bidAmount = b.amount || 0;
@@ -226,7 +227,7 @@ function DailyPage() {
     <div className="min-h-screen">
       <Header />
       <main className="mx-auto max-w-[1200px] px-6">
-        <StatusPill />
+        {/* <StatusPill /> */}
 
         {showFullRankings ? (
           /* Dedicated Full Rankings Page View */

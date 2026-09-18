@@ -47,7 +47,7 @@ function AboutPage() {
     <div className="min-h-screen">
       <Header />
       <main className="mx-auto max-w-[1200px] px-6">
-        <StatusPill />
+        {/* <StatusPill /> */}
 
         <div className="mx-auto mt-5 max-w-[880px]">
           <h1 className="text-3xl font-extrabold leading-tight">About Us</h1>
